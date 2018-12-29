@@ -1,0 +1,69 @@
+#
+# Newsletter landing page
+#
+smmg_newsletter.newsletter:
+  path: '/newsletter'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:landing_page'
+    _title: ' Newsletter'
+  requirements:
+    _permission: 'access content'
+
+#
+# Newsletter subscribe
+#
+smmg_newsletter.subscribe:
+  path: 'newsletter/subscribe'
+  defaults:
+    _form: '\Drupal\smmg_newsletter\Form\SubscribeForm'
+    _title: 'Subscribe to our Newsletter'
+  requirements:
+    _permission: 'access content'
+#
+# Newsletter subscribe direct
+#
+smmg_newsletter.subscribe.email:
+  path: 'newsletter/subscribe-email/{email}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:subscribeDirect'
+    _title: 'Subscribe to our Newsletter'
+    email: null
+  requirements:
+    _permission: 'access content'
+
+#
+# Newsletter abbestellen
+#
+smmg_newsletter.unsubscribe:
+  path: 'newsletter/unsubscribe/{nid}'
+  defaults:
+    _form: '\Drupal\smmg_newsletter\Form\UnsubscribeForm'
+    _title: 'Unsubscribe from our Newsletter'
+    nid: null
+  requirements:
+    _permission: 'access content'
+#
+# Newsletter Thank You
+#
+smmg_newsletter.thank_you:
+  path: '/newsletter/thank-you/{nid}/{token}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:thankYouPage'
+    _title: 'Thank You.'
+    nid: null
+    token: null
+  requirements:
+    _permission: 'access content'
+
+#
+# Newsletter By By
+#
+smmg_newsletter.bye:
+  path: '/newsletter/bye/{nid}/{token}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:byePage'
+    _title: 'Bye.'
+    nid: null
+    token: null
+  requirements:
+    _permission: 'access content'

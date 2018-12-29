@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Contains smmg_newsletter.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function smmg_newsletter_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the smmg_newsletter module.
+    case 'help.page.smmg_newsletter':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Small Messages Plugin for Newsletter') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function smmg_newsletter_theme() {
+  return [
+    'smmg_newsletter' => [
+      'render element' => 'children',
+    ],
+  ];
+}

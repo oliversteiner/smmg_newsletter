@@ -1,0 +1,9 @@
+smmg_newsletter.main:
+  css:
+    theme:
+      assets/css/smmg_newsletter.css: {}
+  js:
+    assets/js/smmg_newsletter.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once

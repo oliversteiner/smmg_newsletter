@@ -1,0 +1,9 @@
+name: 'Small Messages - Newsletter'
+type: module
+description: 'Newsletter Plugin for Small Messages'
+core: 8.x
+package: 'Messages'
+dependencies:
+  - drupal:node
+  - small_messages
+  - honeypot
