@@ -117,6 +117,19 @@ class NewsletterSettingsForm extends ConfigFormBase
             '#default_value' => $config->get('get_path_type'),
         );
 
+
+        //     - Name of Module or Theme
+        $form['templates']['get_path_name'] = array(
+            '#type' => 'textfield',
+            '#title' => $this->t('Name of Module or Theme'),
+            '#default_value' => $config->get('get_path_name'),
+        );
+
+        //   - Root of Templates
+        $form['templates']['templates'] = array(
+            '#markup' => $this->t('Templates'),
+        );
+
         //  Twig Templates
         // -------------------------------------------------------------
 
