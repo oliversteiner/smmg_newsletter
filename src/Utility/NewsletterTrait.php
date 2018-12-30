@@ -7,11 +7,14 @@ use Drupal\smmg_newsletter\Controller\NewsletterController;
 
 trait NewsletterTrait
 {
-
+    public static function getModuleName()
+    {
+        return 'smmg_newsletter';
+    }
 
     public static function sendNotivicationMail($nid, $token)
     {
-        $module = 'smmg_newsletter';
+        $module = self::getModuleName();
         $data = NewsletterController::newsletterVariables($nid, $token);
         $templates = NewsletterController::getTemplates();
 
@@ -30,7 +33,7 @@ trait NewsletterTrait
 
     public static function getEmailAddressesFromConfig()
     {
-        $module = 'smmg_newsletter';
+        $module = self::getModuleName();
         return Email::getEmailAddressesFromConfig($module);
 
     }
