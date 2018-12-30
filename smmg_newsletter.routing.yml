@@ -1,4 +1,20 @@
 #
+# Settings
+# ---------------------------------
+#
+smmg_newsletter.settings:
+  path: '/admin/structure/smmg_newsletter/settings'
+  defaults:
+    _form: '\Drupal\smmg_newsletter\Form\NewsletterSettingsForm'
+    _title: 'Newsletter Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+#
+# Newsletter
+# ---------------------------------
+
+#
 # Newsletter landing page
 #
 smmg_newsletter.newsletter:
@@ -59,10 +75,23 @@ smmg_newsletter.thank_you:
 # Newsletter By By
 #
 smmg_newsletter.bye:
-  path: '/newsletter/bye/{nid}/{token}'
+  path: '/newsletter/bye-bye/{nid}/{token}'
   defaults:
     _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:byePage'
     _title: 'Bye.'
+    nid: null
+    token: null
+  requirements:
+    _permission: 'access content'
+
+#
+# newsletter - Email Sandbox // 1594
+#
+smmg_newsletter.sandbox_send_email:
+  path: 'newsletter/send/{nid}/{token}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController::sandboxSendEmail'
+    _title: 'newsletter Email Test'
     nid: null
     token: null
   requirements:

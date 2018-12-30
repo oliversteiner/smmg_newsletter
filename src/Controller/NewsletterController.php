@@ -11,10 +11,13 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\small_messages\Utility\Helper;
+use Drupal\smmg_newsletter\Utility\NewsletterTrait;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class NewsletterController extends ControllerBase
 {
+
+    use NewsletterTrait;
 
     /**
      * @return mixed
@@ -28,8 +31,9 @@ class NewsletterController extends ControllerBase
         $variables['url']['subscribe'] = $url_subscribe;
         $variables['url']['unsubscribe'] = $url_unsubscribe;
 
-        $template_path = drupal_get_path('module', 'smmg_newsletter') . "/templates/smmg-newsletter.html.twig";
-        $template = file_get_contents($template_path);
+        $templates = self::getTemplates();
+        $template = file_get_contents($templates['landing_page']);
+
         $build = [
             'description' => [
                 '#type' => 'inline_template',
@@ -166,16 +170,18 @@ class NewsletterController extends ControllerBase
      */
     public static function newSubscriber($data)
     {
+        // Token
+        $token = $data['token'];
+
         $output = [
             'status' => FALSE,
             'mode' => 'save',
             'nid' => FALSE,
             'message' => '',
-            'token' => false,
+            'token' => $token,
         ];
 
-        // Token
-        $token = $data['token'];
+
 
         // Newsletter
         $subscribe = $data['subscribe'];
@@ -237,7 +243,6 @@ class NewsletterController extends ControllerBase
 
                         // Newsletter
                         'field_smmg_accept_newsletter' => $subscribe,
-
                     ]);
 
 
@@ -260,7 +265,7 @@ class NewsletterController extends ControllerBase
                     $output['token'] = $token;
 
 
-                    self::thankYouPage($nid, $token);
+                    self::sendNotivicationMail($nid, $token);
                 }
             } catch (InvalidPluginDefinitionException $e) {
             } catch (PluginNotFoundException $e) {
@@ -314,14 +319,15 @@ class NewsletterController extends ControllerBase
             throw new AccessDeniedHttpException();
         }
 
-        $template_path = drupal_get_path('module', 'smmg_newsletter') . "/templates/smmg-bye.html.twig";
-        $template = file_get_contents($template_path);
+        $templates = self::getTemplates();
+        $template = file_get_contents($templates['bye_bye']);
+
         $build = [
             'description' => [
                 '#type' => 'inline_template',
                 '#template' => $template,
                 '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
-                '#context' => self::memberVariables($nid, $token),
+                '#context' => self::newsletterVariables($nid, $token),
             ],
         ];
         return $build;
@@ -342,15 +348,15 @@ class NewsletterController extends ControllerBase
         if ($token == false) {
             throw new AccessDeniedHttpException();
         }
+        $templates = self::getTemplates();
+        $template = file_get_contents($templates['thank_you']);
 
-        $template_path = drupal_get_path('module', 'smmg_newsletter') . "/templates/smmg-thank-you.html.twig";
-        $template = file_get_contents($template_path);
         $build = [
             'description' => [
                 '#type' => 'inline_template',
                 '#template' => $template,
                 '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
-                '#context' => self::memberVariables($nid, $token),
+                '#context' => self::newsletterVariables($nid, $token),
             ],
         ];
         return $build;
@@ -361,7 +367,7 @@ class NewsletterController extends ControllerBase
      * @param null $token
      * @return array
      */
-    public static function memberVariables($nid = null, $token = null)
+    public static function newsletterVariables($nid, $token)
     {
         $variables = [];
 
@@ -415,5 +421,91 @@ class NewsletterController extends ControllerBase
             }
         }
         return $variables;
+    }
+
+
+    public function sandboxEmail($coupon_order_nid, $token = null, $output_mode = 'html')
+    {
+        $build = false;
+
+        // Get Content
+        $data = self::newsletterVariables($coupon_order_nid, $token);
+        $data['sandbox'] = true;
+
+        $templates = self::getTemplates();
+
+
+        // HTML Email
+        if ($output_mode == 'html') {
+
+            // Build HTML Content
+            $template = file_get_contents($templates['email_html']);
+            $build_html = [
+                'description' => [
+                    '#type' => 'inline_template',
+                    '#template' => $template,
+                    '#context' => $data,
+                ],
+            ];
+
+            $build = $build_html;
+        }
+
+
+        // Plaintext
+        if ($output_mode == 'plain') {
+
+            // Build Plain Text Content
+            $template = file_get_contents($templates['email_plain']);
+
+            $build_plain = [
+                'description' => [
+                    '#type' => 'inline_template',
+                    '#template' => $template,
+                    '#context' => $data,
+                ],
+            ];
+
+            $build = $build_plain;
+
+        }
+
+        return $build;
+    }
+
+
+    public function sandboxSendEmail($nid, $token = null, $output_mode = 'html')
+    {
+
+        $build = $this->sandboxEmail($nid, $token, $output_mode);
+
+        self::sendNotivicationMail($nid, $token);
+
+        return $build;
+    }
+
+
+    public static function getTemplateNames()
+    {
+
+        $templates = [
+            'landing_page',
+            'bye_bye',
+            'thank_you',
+            'email_html',
+            'email_plain',
+        ];
+
+        return $templates;
+    }
+
+
+    public static function getTemplates()
+    {
+        $module = 'smmg_newsletter';
+        $template_names = self::getTemplateNames();
+        $templates = Helper::getTemplates($module, $template_names);
+
+        return $templates;
     }
 }
