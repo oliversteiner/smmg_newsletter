@@ -214,6 +214,11 @@ class NewsletterController extends ControllerBase
             }
 
             try {
+
+                // Load List for origin
+                $vid = 'smmg_origin';
+                $origin_list = Helper::getTermsByName($vid);
+
                 $storage = \Drupal::entityTypeManager()->getStorage('node');
                 $new_member = $storage->create(
                     [
@@ -227,7 +232,8 @@ class NewsletterController extends ControllerBase
                         'field_zip_code' => $zip_code,
                         'field_city' => $city,
                         'field_email' => $email,
-                        'field_token' => $token,
+                        'field_smmg_token' => $token,
+                        'field_smmg_origin' => $origin_list['newsletter'],
 
                         // Newsletter
                         'field_smmg_accept_newsletter' => $subscribe,
@@ -378,7 +384,7 @@ class NewsletterController extends ControllerBase
         $nid = intval($nid);
 
         // Load Terms from Taxonomy
-        $gender_list = Helper::getTerms('gender');
+        $gender_list = Helper::getTermsByID('gender');
 
         // Member & Newsletter
         if ($nid) {
@@ -388,7 +394,7 @@ class NewsletterController extends ControllerBase
             if ($member && $member->bundle() == 'member') {
 
                 // Check Token
-                $node_token = Helper::getFieldValue($member, 'token');
+                $node_token = Helper::getFieldValue($member, 'smmg_token');
 
                 if ($token != $node_token) {
                     throw new AccessDeniedHttpException();
