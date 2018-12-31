@@ -33,3 +33,4 @@ function smmg_newsletter_theme() {
     ],
   ];
 }
+
