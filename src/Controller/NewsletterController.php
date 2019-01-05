@@ -131,7 +131,7 @@ class NewsletterController extends ControllerBase
                 ->load($nid);
 
             // Node exists ?
-            if ($entity && $entity->bundle() == 'member') {
+            if ($entity && $entity->bundle() == 'smmg_member') {
 
 
                 // Save Subscription
@@ -217,7 +217,7 @@ class NewsletterController extends ControllerBase
                 $storage = \Drupal::entityTypeManager()->getStorage('node');
                 $new_member = $storage->create(
                     [
-                        'type' => 'member',
+                        'type' => 'smmg_member',
                         'title' => $title,
                         'field_gender' => $gender,
                         'field_first_name' => $first_name,
@@ -277,7 +277,7 @@ class NewsletterController extends ControllerBase
             try {
                 $nodes = \Drupal::entityTypeManager()->getStorage('node')
                     ->loadByProperties(
-                        ['type' => 'member',
+                        ['type' => 'smmg_member',
                             'field_email' => $email,]
                     );
             } catch (InvalidPluginDefinitionException $e) {
@@ -385,7 +385,7 @@ class NewsletterController extends ControllerBase
 
             $member = Node::load($nid);
 
-            if ($member && $member->bundle() == 'member') {
+            if ($member && $member->bundle() == 'smmg_member') {
 
                 // Check Token
                 $node_token = Helper::getFieldValue($member, 'token');
