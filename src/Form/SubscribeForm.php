@@ -273,8 +273,12 @@ class SubscribeForm extends FormBase
 
             if ($result && $result['status']) {
 
+                dpm($result);
+
                 $arg['nid'] = intval($result['nid']);
                 $arg['token'] = $result['token'];
+
+                $form_state->setRedirect('smmg_newsletter.thank_you', $arg);
 
             } else {
                 // Error on create new Member
@@ -284,8 +288,6 @@ class SubscribeForm extends FormBase
             }
         }
 
-        // Go to  Thank You Form
-        $form_state->setRedirect('smmg_newsletter.thank_you', $arg);
     }
 
 

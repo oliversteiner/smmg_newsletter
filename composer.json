@@ -4,11 +4,11 @@
   "description": "Newsletter Module for Small Messages",
   "keywords": ["Drupal"],
   "license": "GPL-3.0+",
-  "homepage": "https://www.drupal.org/project/smmg_newsletter",
+  "homepage": "https://github.com/oliversteiner/smmg_newsletter",
   "minimum-stability": "dev",
   "support": {
-    "issues": "https://www.drupal.org/project/issues/smmg_newsletter",
-    "source": "http://cgit.drupalcode.org/smmg_newsletter"
+    "issues": "https://github.com/oliversteiner/smmg_newsletter/issues",
+    "source": "https://github.com/oliversteiner/smmg_newsletter"
   },
   "require": { }
 }
