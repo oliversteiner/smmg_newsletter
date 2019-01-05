@@ -90,7 +90,7 @@ class NewsletterSettingsForm extends ConfigFormBase
         // - Email Test
         $form['email']['email_test'] = array(
             '#type' => 'checkbox',
-            '#title' => $this->t('Testmode: Don\'t send email to Subscriber'),
+            '#title' => $this->t('Testmode: Don\'t send email to Subscriber.'),
             '#default_value' => $config->get('email_test'),
         );
 

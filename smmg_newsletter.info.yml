@@ -8,3 +8,8 @@ dependencies:
   - small_messages
   - smmg_member
   - honeypot
+  -
+project: smmg_newsletter
+version: 1.0.0
+'interface translation project': smmg_newsletter
+'interface translation server pattern': modules/%project/translations/%project-%version.%language.po

@@ -2,9 +2,13 @@
 
 {{ dd(_context|keys) }}
 
-<h2>Hello {{ address.first_name }}</h2>
+<h2>{% trans %} Hello {% endtrans %}
 
-<p>Thank you for subscribing to our Newsletter!</p>
+ {{ address.first_name }}</h2>
+
+<p>{% trans %} Thank you for subscribing to our Newsletter! {% endtrans %}
+
+</p>
 
 
 <p>You can unsubscribe <a href="{{ url('smmg_newsletter.unsubscribe') }}">here</a> at any time.</p>

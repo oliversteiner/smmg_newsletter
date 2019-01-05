@@ -150,14 +150,14 @@ class NewsletterController extends ControllerBase
                 $output['status'] = true;
 
                 if ($subscribe) {
-                    $output['message'] = t("Successfully subscribed from newsletter");
+                    $output['message'] = t("Successfully subscribed to newsletter.");
                 } else {
-                    $output['message'] = t("Successfully unsubscribed from newsletter");
+                    $output['message'] = t("Successfully unsubscribed from newsletter.");
                 }
 
             }
         } else {
-            $output['message'] = t("This user does not exist");
+            $output['message'] = t("This user does not exist.");
             $output['level'] = 'error';
         }
 

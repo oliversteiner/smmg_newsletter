@@ -132,7 +132,7 @@ class UnsubscribeForm extends FormBase
 
                         // Email Address not found
                         $form_state->setErrorByName('email',
-                            $this->t('This email is not known to us'));
+                            $this->t('This email is not known to us.'));
                     } else {
 
                         // Email Address Found!

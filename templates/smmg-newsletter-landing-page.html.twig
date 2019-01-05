@@ -2,8 +2,14 @@
 
 {{ dump(_context|keys) }}
 
-<h2>Here you can subscribe or unsubscribe our newsletter.</h2>
+<h2>{% trans %} Here you can subscribe or unsubscribe our newsletter. {% endtrans %}
+
+</h2>
 
 
-<p><a href="{{ url('smmg_newsletter.subscribe') }}">Subscribe</a></p>
-<p><a href="{{ url('smmg_newsletter.unsubscribe') }}">Unsubscribe</a></p>
+<p><a href="{{ url('smmg_newsletter.subscribe') }}">{% trans %} Subscribe {% endtrans %}
+
+</a></p>
+<p><a href="{{ url('smmg_newsletter.unsubscribe') }}">{% trans %} Unsubscribe {% endtrans %}
+
+</a></p>

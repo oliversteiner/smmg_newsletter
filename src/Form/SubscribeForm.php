@@ -88,7 +88,7 @@ class SubscribeForm extends FormBase
         // Newsletter
         // ===============================================
         $form['subscribe'] = [
-            '#title' => $this->t('I want to receive the newsletter'),
+            '#title' => $this->t('I want to receive the newsletter.'),
             '#type' => 'checkbox',
             '#default_value' => 1,
         ];
