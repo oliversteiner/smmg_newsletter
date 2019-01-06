@@ -57,6 +57,9 @@ class SubscribeForm extends FormBase
     {
         $values = $form_state->getUserInput();
 
+        // Gender Options
+        $gender_options = $this->gender_options;
+
         // Spam and Bot Protection
         honeypot_add_form_protection($form, $form_state, [
             'honeypot',
@@ -73,8 +76,16 @@ class SubscribeForm extends FormBase
 
         // Subscribe
         // ==============================================
-        // eMail
+
+
         $form['email'] = [
+            '#type' => 'fieldset',
+            '#title' => $this->t('Email'),
+            '#attributes' => ['class' => ['']],
+        ];
+
+        // eMail
+        $form['email']['email'] = [
             '#type' => 'email',
             '#title' => t('Email'),
             '#size' => 60,
@@ -87,7 +98,7 @@ class SubscribeForm extends FormBase
 
         // Newsletter
         // ===============================================
-        $form['subscribe'] = [
+        $form['email']['subscribe'] = [
             '#title' => $this->t('I want to receive the newsletter.'),
             '#type' => 'checkbox',
             '#default_value' => 1,
@@ -108,8 +119,7 @@ class SubscribeForm extends FormBase
             '#markup' => $this->t('These details are not mandatory, but will help us to get to know you better.')
         ];
 
-        // Gender Options
-        $gender_options = $this->gender_options;
+
 
 
         $form['postal_address']['gender'] = [

@@ -2,14 +2,21 @@
 
 <!-- Add you custom twig html here -->
 
+{#
 {{ dd(_context|keys) }}
+#}
 
-Hello {{ address.first_name }}
+{% trans %} Hello {% endtrans %}
 
-Thank you for subscribing to our Newsletter!
+ {{ address.first_name }}
+
+{% trans %} Thank you for subscribing to our Newsletter! {% endtrans %}
 
 
-You can unsubscribe at any time : https://mollo.ch/newsletter/unsubscribe/
+
+
+{% trans %} You can unsubscribe at any time {% endtrans %}
+    : https://mollo.ch/newsletter/unsubscribe/
 
 
 {% if sandbox %}</pre>{% endif %}
