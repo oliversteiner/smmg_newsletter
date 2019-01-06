@@ -187,8 +187,8 @@ class SubscribeForm extends FormBase
         ];
 
 
-        // Telephone
-        $form['postal_address']['telephone'] = [
+        // Phone
+        $form['postal_address']['phone'] = [
             '#type' => 'textfield',
             '#title' => t('Phone'),
             '#size' => 60,

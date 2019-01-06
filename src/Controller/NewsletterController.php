@@ -221,9 +221,9 @@ class NewsletterController extends ControllerBase
 
             try {
 
-                // Load List for origin
-                $vid = 'smmg_origin';
-                $origin_list = Helper::getTermsByName($vid);
+                // Origin
+                $origin = 'Newsletter';
+                $origin_tid = Helper::getOrigin($origin);
 
                 $storage = \Drupal::entityTypeManager()->getStorage('node');
                 $new_member = $storage->create(
@@ -239,7 +239,7 @@ class NewsletterController extends ControllerBase
                         'field_city' => $city,
                         'field_email' => $email,
                         'field_smmg_token' => $token,
-                        'field_smmg_origin' => $origin_list['newsletter'],
+                        'field_smmg_origin' => $origin_tid,
 
                         // Newsletter
                         'field_smmg_accept_newsletter' => $subscribe,
