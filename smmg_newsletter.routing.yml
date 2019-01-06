@@ -3,7 +3,7 @@
 # ---------------------------------
 #
 smmg_newsletter.settings:
-  path: '/admin/structure/smmg_newsletter/settings'
+  path: '/admin/config/small_messages/smmg_newsletter/settings'
   defaults:
     _form: '\Drupal\smmg_newsletter\Form\NewsletterSettingsForm'
     _title: 'Newsletter Settings'

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-06 00:06+0100\n"
-"PO-Revision-Date: 2019-01-06 00:06+0100\n"
+"POT-Creation-Date: 2019-01-06 00:33+0100\n"
+"PO-Revision-Date: 2019-01-06 00:33+0100\n"
 "Last-Translator: Oliver Steiner <oliver@mollo.ch>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Generator: Poedit 2.2\n"
 "X-Poedit-Basepath: ..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-KeywordsList: t\n"
+"X-Poedit-KeywordsList: t;trans\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: templates\n"
 
@@ -114,7 +114,7 @@ msgstr "PLZ"
 
 #: src/Form/SubscribeForm.php:172
 msgid "City"
-msgstr "Stadt"
+msgstr "Ort"
 
 #: src/Form/SubscribeForm.php:183
 msgid "Phone"
@@ -177,7 +177,7 @@ msgstr "Vielen Dank, dass Sie unseren Newsletter abonniert haben!"
 
 #: templates/smmg-newsletter-landing-page.html.twig:5
 msgid "Here you can subscribe or unsubscribe our newsletter."
-msgstr "Erfolgreich vom Newsletter abgemeldet."
+msgstr "Hier können Sie unseren Newsletter abonnieren oder abbestellen."
 
 #: templates/smmg-newsletter-landing-page.html.twig:13
 msgid "Unsubscribe"

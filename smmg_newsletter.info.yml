@@ -2,7 +2,7 @@ name: 'Small Messages - Newsletter'
 type: module
 description: 'Newsletter Module for Small Messages'
 core: 8.x
-package: 'Messages'
+package: 'Small Messages'
 dependencies:
   - drupal:node
   - small_messages
