@@ -12,7 +12,7 @@ trait NewsletterTrait
         return 'smmg_newsletter';
     }
 
-    public static function sendNotivicationMail($nid, $token)
+    public static function sendNotificationMail($nid, $token)
     {
         $module = self::getModuleName();
         $data = NewsletterController::newsletterVariables($nid, $token);

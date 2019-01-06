@@ -265,7 +265,7 @@ class NewsletterController extends ControllerBase
                     $output['token'] = $token;
 
 
-                    self::sendNotivicationMail($nid, $token);
+                    self::sendNotificationMail($nid, $token);
                 }
             } catch (InvalidPluginDefinitionException $e) {
             } catch (PluginNotFoundException $e) {
@@ -479,7 +479,7 @@ class NewsletterController extends ControllerBase
 
         $build = $this->sandboxEmail($nid, $token, $output_mode);
 
-        self::sendNotivicationMail($nid, $token);
+        self::sendNotificationMail($nid, $token);
 
         return $build;
     }
