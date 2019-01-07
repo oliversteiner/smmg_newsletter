@@ -152,7 +152,6 @@ class UnsubscribeForm extends FormBase
     function submitForm(array &$form, FormStateInterface $form_state)
     {
         $result = NewsletterController::unsubscribe($this->member_nid);
-        dpm($result);
 
         if ($result['token']) {
 
