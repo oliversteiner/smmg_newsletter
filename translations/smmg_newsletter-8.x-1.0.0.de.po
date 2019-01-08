@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2019-01-06 00:33+0100\n"
-"PO-Revision-Date: 2019-01-06 00:33+0100\n"
+"POT-Creation-Date: 2019-01-08 05:20+0100\n"
+"PO-Revision-Date: 2019-01-08 05:20+0100\n"
 "Last-Translator: Oliver Steiner <oliver@mollo.ch>\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -73,63 +73,63 @@ msgstr "Name des Moduls oder des Themes"
 msgid "Please Chose"
 msgstr "Bitte wählen"
 
-#: src/Form/SubscribeForm.php:79
+#: src/Form/SubscribeForm.php:83 src/Form/SubscribeForm.php:90
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/Form/SubscribeForm.php:91
+#: src/Form/SubscribeForm.php:102
 msgid "I want to receive the newsletter."
 msgstr "Ich möchte den Newsletter erhalten."
 
-#: src/Form/SubscribeForm.php:102
+#: src/Form/SubscribeForm.php:113
 msgid "Address"
 msgstr "Adresse"
 
-#: src/Form/SubscribeForm.php:108
+#: src/Form/SubscribeForm.php:119
 msgid ""
 "These details are not mandatory, but will help us to get to know you better."
 msgstr ""
 "Diese Angaben sind nicht verpflichtend, helfen uns aber, Sie besser "
 "kennenzulernen."
 
-#: src/Form/SubscribeForm.php:117
+#: src/Form/SubscribeForm.php:127
 msgid "Gender"
 msgstr "Anrede"
 
-#: src/Form/SubscribeForm.php:128
+#: src/Form/SubscribeForm.php:138
 msgid "First Name"
 msgstr "Vorname"
 
-#: src/Form/SubscribeForm.php:140
+#: src/Form/SubscribeForm.php:150
 msgid "Last Name"
 msgstr "Nachname"
 
-#: src/Form/SubscribeForm.php:151
+#: src/Form/SubscribeForm.php:161
 msgid "Street and Nr."
 msgstr "Strasse und Nr."
 
-#: src/Form/SubscribeForm.php:162
+#: src/Form/SubscribeForm.php:172
 msgid "ZIP"
 msgstr "PLZ"
 
-#: src/Form/SubscribeForm.php:172
+#: src/Form/SubscribeForm.php:182
 msgid "City"
 msgstr "Ort"
 
-#: src/Form/SubscribeForm.php:183
+#: src/Form/SubscribeForm.php:193
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/Form/SubscribeForm.php:209
-#: templates/smmg-newsletter-landing-page.html.twig:10
+#: src/Form/SubscribeForm.php:219
+#: templates/smmg-newsletter-landing-page.html.twig:9
 msgid "Subscribe"
 msgstr "Abonnieren"
 
-#: src/Form/SubscribeForm.php:239
+#: src/Form/SubscribeForm.php:249
 msgid "An email address is required to receive the newsletter."
 msgstr "Für den Empfang des Newsletters ist eine E-Mail-Adresse erforderlich."
 
-#: src/Form/SubscribeForm.php:248
+#: src/Form/SubscribeForm.php:258
 msgid "There is something wrong with this email address."
 msgstr "Mit dieser E-Mail-Adresse stimmt etwas nicht."
 
@@ -165,20 +165,30 @@ msgstr "Mit dieser E-Mail-Adresse stimmt etwas nicht."
 msgid "This email is not known to us."
 msgstr "Diese E-Mail ist uns nicht bekannt."
 
-#: templates/smmg-newsletter-email-html.html.twig:5
-#: templates/smmg-newsletter-thank-you.html.twig:5
+#: templates/smmg-newsletter-bye-bye.html.twig:7
+msgid "You have been successfully unsubscribed from the newsletter."
+msgstr "Erfolgreich vom Newsletter abgemeldet."
+
+#: templates/smmg-newsletter-email-html.html.twig:7
+#: templates/smmg-newsletter-email-plain.html.twig:9
+#: templates/smmg-newsletter-thank-you.html.twig:7
 msgid "Hello"
 msgstr "Hallo"
 
 #: templates/smmg-newsletter-email-html.html.twig:9
+#: templates/smmg-newsletter-email-plain.html.twig:13
 #: templates/smmg-newsletter-thank-you.html.twig:9
 msgid "Thank you for subscribing to our Newsletter!"
 msgstr "Vielen Dank, dass Sie unseren Newsletter abonniert haben!"
 
-#: templates/smmg-newsletter-landing-page.html.twig:5
+#: templates/smmg-newsletter-email-plain.html.twig:18
+msgid "You can unsubscribe at any time"
+msgstr "Sie können sich jederzeit abmelden"
+
+#: templates/smmg-newsletter-landing-page.html.twig:7
 msgid "Here you can subscribe or unsubscribe our newsletter."
 msgstr "Hier können Sie unseren Newsletter abonnieren oder abbestellen."
 
-#: templates/smmg-newsletter-landing-page.html.twig:13
+#: templates/smmg-newsletter-landing-page.html.twig:10
 msgid "Unsubscribe"
 msgstr "Abmelden"
