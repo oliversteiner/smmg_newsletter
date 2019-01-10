@@ -15,7 +15,8 @@ use Drupal\smmg_newsletter\Controller\NewsletterController;
  */
 class SubscribeForm extends FormBase
 {
-    public $gender_options;
+    public $options_gender;
+    public $default_gender;
 
 
     /**
@@ -26,17 +27,11 @@ class SubscribeForm extends FormBase
         // Load Gender Options from Taxonomy
         $gender_options[0] = t('Please Chose');
 
-        $vid = 'gender';
+        $vid_gender = 'smmg_gender';
 
-        $terms = \Drupal::entityTypeManager()
-            ->getStorage('taxonomy_term')
-            ->loadTree($vid);
-
-        foreach ($terms as $term) {
-            $gender_options[$term->tid] = $term->name;
-        }
-
-        $this->gender_options = $gender_options;
+        $this->options_gender = Helper::getTermsByID($vid_gender);
+        $this->options_gender[0] = t('Please Chose');
+        $this->default_gender = 0;
 
     }
 
@@ -57,8 +52,6 @@ class SubscribeForm extends FormBase
     {
         $values = $form_state->getUserInput();
 
-        // Gender Options
-        $gender_options = $this->gender_options;
 
         // Spam and Bot Protection
         honeypot_add_form_protection($form, $form_state, [
@@ -120,13 +113,11 @@ class SubscribeForm extends FormBase
         ];
 
 
-
-
         $form['postal_address']['gender'] = [
             '#type' => 'select',
             '#title' => t('Gender'),
-            '#default_value' => $gender_options[0],
-            '#options' => $gender_options,
+            '#default_value' => $this->default_gender,
+            '#options' => $this->options_gender,
             '#required' => FALSE,
             '#prefix' => '<div class="form-group">',
             '#suffix' => '</div>',
@@ -298,8 +289,6 @@ class SubscribeForm extends FormBase
         }
 
     }
-
-
 
 
 }
