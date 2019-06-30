@@ -2,12 +2,13 @@
 
 namespace Drupal\smmg_newsletter\Form;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\small_messages\Utility\Helper;
 use Drupal\smmg_newsletter\Controller\NewsletterController;
-
 
 /**
  * Implements SubscribeForm form FormBase.
@@ -15,280 +16,259 @@ use Drupal\smmg_newsletter\Controller\NewsletterController;
  */
 class SubscribeForm extends FormBase
 {
-    public $options_gender;
-    public $default_gender;
+  public $options_gender;
+  public $default_gender;
 
+  /**
+   *  constructor.
+   */
+  public function __construct()
+  {
+    // Load Gender Options from Taxonomy
+    $gender_options[0] = t('Please Chose');
 
-    /**
-     *  constructor.
-     */
-    public function __construct()
-    {
-        // Load Gender Options from Taxonomy
-        $gender_options[0] = t('Please Chose');
+    $vid_gender = 'smmg_gender';
 
-        $vid_gender = 'smmg_gender';
+    $this->options_gender = Helper::getTermsByID($vid_gender);
+    $this->options_gender[0] = t('Please Chose');
+    $this->default_gender = 0;
+  }
 
-        $this->options_gender = Helper::getTermsByID($vid_gender);
-        $this->options_gender[0] = t('Please Chose');
-        $this->default_gender = 0;
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId()
+  {
+    return 'smmg_newsletter_form';
+  }
 
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state)
+  {
+    // $values = $form_state->getUserInput();
 
+    // Spam and Bot Protection
+    honeypot_add_form_protection($form, $form_state, [
+      'honeypot',
+      'time_restriction',
+    ]);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormId()
-    {
-        return 'smmg_newsletter_form';
-    }
+    // JS and CSS
+    $form['#attached']['library'][] = 'smmg_newsletter/smmg_newsletter.main';
 
+    // Disable browser HTML5 validation
+    $form['#attributes']['novalidate'] = 'novalidate';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(array $form, FormStateInterface $form_state)
-    {
-        $values = $form_state->getUserInput();
+    // Subscribe
+    // ==============================================
 
+    $form['email'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Email'),
+      '#attributes' => ['class' => ['']],
+    ];
 
-        // Spam and Bot Protection
-        honeypot_add_form_protection($form, $form_state, [
-            'honeypot',
-            'time_restriction',
-        ]);
+    // eMail
+    $form['email']['email'] = [
+      '#type' => 'email',
+      '#title' => t('Email'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#required' => true,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
-        // JS and CSS
-        $form['#attached']['library'][] = 'smmg_newsletter/smmg_newsletter.main';
+    // Newsletter
+    // ===============================================
+    $form['email']['subscribe'] = [
+      '#title' => $this->t('I want to receive the newsletter.'),
+      '#type' => 'checkbox',
+      '#default_value' => 1,
+    ];
 
+    // Address
+    // ==============================================
 
-        // Disable browser HTML5 validation
-        $form['#attributes']['novalidate'] = 'novalidate';
+    $form['postal_address'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Address'),
+      '#attributes' => ['class' => ['']],
+    ];
 
+    $form['postal_address']['info'] = [
+      '#theme' => '',
+      '#markup' => $this->t(
+        'These details are not mandatory, but will help us to get to know you better.'
+      ),
+    ];
 
-        // Subscribe
-        // ==============================================
+    $form['postal_address']['gender'] = [
+      '#type' => 'select',
+      '#title' => t('Gender'),
+      '#default_value' => $this->default_gender,
+      '#options' => $this->options_gender,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
+    // firstName
+    $form['postal_address']['first_name'] = [
+      '#type' => 'textfield',
+      '#title' => t('First Name'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
-        $form['email'] = [
-            '#type' => 'fieldset',
-            '#title' => $this->t('Email'),
-            '#attributes' => ['class' => ['']],
-        ];
+    // lastName
+    $form['postal_address']['last_name'] = [
+      '#type' => 'textfield',
+      '#title' => t('Last Name'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
-        // eMail
-        $form['email']['email'] = [
-            '#type' => 'email',
-            '#title' => t('Email'),
-            '#size' => 60,
-            '#maxlength' => 128,
-            '#required' => True,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
+    // Strasse und Nr.:
+    $form['postal_address']['street_and_number'] = [
+      '#type' => 'textfield',
+      '#title' => t('Street and Nr.'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
+    // PLZ
+    $form['postal_address']['zip_code'] = [
+      '#type' => 'textfield',
+      '#title' => t('ZIP'),
+      '#size' => 8,
+      '#maxlength' => 8,
+      '#required' => false,
+      '#prefix' => '<div class="form-group form-group-zip-city">',
+    ];
 
-        // Newsletter
-        // ===============================================
-        $form['email']['subscribe'] = [
-            '#title' => $this->t('I want to receive the newsletter.'),
-            '#type' => 'checkbox',
-            '#default_value' => 1,
-        ];
+    // Ort
+    $form['postal_address']['city'] = [
+      '#type' => 'textfield',
+      '#title' => t('City'),
+      '#size' => 50,
+      '#maxlength' => 50,
+      '#required' => false,
+      '#suffix' => '</div>',
+    ];
 
+    // Phone
+    $form['postal_address']['phone'] = [
+      '#type' => 'textfield',
+      '#title' => t('Phone'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
-        // Address
-        // ==============================================
+    // Submit
+    // ===============================================
 
-        $form['postal_address'] = [
-            '#type' => 'fieldset',
-            '#title' => $this->t('Address'),
-            '#attributes' => ['class' => ['']],
-        ];
+    $token = Helper::generateToken();
 
-        $form['postal_address']['info'] = [
-            '#theme' => '',
-            '#markup' => $this->t('These details are not mandatory, but will help us to get to know you better.')
-        ];
+    $form['token'] = [
+      '#type' => 'hidden',
+      '#value' => $token,
+    ];
 
+    $form['actions'] = [
+      '#type' => 'actions',
+    ];
 
-        $form['postal_address']['gender'] = [
-            '#type' => 'select',
-            '#title' => t('Gender'),
-            '#default_value' => $this->default_gender,
-            '#options' => $this->options_gender,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
+    // Add a submit button that handles the submission of the form.
+    $form['actions']['save_data'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Subscribe'),
+      '#allowed_tags' => ['style'],
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
 
-        // firstName
-        $form['postal_address']['first_name'] = [
-            '#type' => 'textfield',
-            '#title' => t('First Name'),
-            '#size' => 60,
-            '#maxlength' => 128,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
+    return $form;
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state):void
+  {
+    $values = $form_state->getValues();
 
-        // lastName
-        $form['postal_address']['last_name'] = [
-            '#type' => 'textfield',
-            '#title' => t('Last Name'),
-            '#size' => 60,
-            '#maxlength' => 128,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
+    $email = $values['email'];
 
-        // Strasse und Nr.:
-        $form['postal_address']['street_and_number'] = [
-            '#type' => 'textfield',
-            '#title' => t('Street and Nr.'),
-            '#size' => 60,
-            '#maxlength' => 128,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
+    // Newsletter
+    $subscribe = $values['subscribe'];
 
-        // PLZ
-        $form['postal_address']['zip_code'] = [
-            '#type' => 'textfield',
-            '#title' => t('ZIP'),
-            '#size' => 8,
-            '#maxlength' => 8,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group form-group-zip-city">',
-        ];
+    if ($subscribe === 1) {
+      // Empty Email
+      if ($email == '') {
+        // No email specified
+        $form_state->setErrorByName(
+          'email',
+          $this->t('An email address is required to receive the newsletter.')
+        );
+      } else {
+        $valiated_email = \Drupal::service('email.validator')->isValid($email);
 
-        // Ort
-        $form['postal_address']['city'] = [
-            '#type' => 'textfield',
-            '#title' => t('City'),
-            '#size' => 50,
-            '#maxlength' => 50,
-            '#required' => FALSE,
-            '#suffix' => '</div>',
-        ];
-
-
-        // Phone
-        $form['postal_address']['phone'] = [
-            '#type' => 'textfield',
-            '#title' => t('Phone'),
-            '#size' => 60,
-            '#maxlength' => 128,
-            '#required' => FALSE,
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
-
-
-        // Submit
-        // ===============================================
-
-        $token = Helper::generateToken();
-
-        $form['token'] = [
-            '#type' => 'hidden',
-            '#value' => $token,
-        ];
-
-        $form['actions'] = [
-            '#type' => 'actions',
-        ];
-
-        // Add a submit button that handles the submission of the form.
-        $form['actions']['save_data'] = [
-            '#type' => 'submit',
-            '#value' => $this->t('Subscribe'),
-            '#allowed_tags' => ['style'],
-            '#prefix' => '<div class="form-group">',
-            '#suffix' => '</div>',
-        ];
-
-        return $form;
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public
-    function validateForm(array &$form, FormStateInterface $form_state)
-    {
-        $values = $form_state->getValues();
-
-        $email = $values['email'];
-
-        // Newsletter
-        $subscribe = $values['subscribe'];
-
-        if ($subscribe === 1) {
-
-            // Empty Email
-            if ($email == '') {
-
-                // No email specified
-                $form_state->setErrorByName('email',
-                    $this->t('An email address is required to receive the newsletter.'));
-
-            } else {
-
-                $valiated_email = \Drupal::service('email.validator')
-                    ->isValid($email);
-
-                if (FALSE === $valiated_email) {
-                    $form_state->setErrorByName('email',
-                        $this->t('There is something wrong with this email address.'));
-                }
-
-            }
+        if (false === $valiated_email) {
+          $form_state->setErrorByName(
+            'email',
+            $this->t('There is something wrong with this email address.')
+          );
         }
-
-
+      }
     }
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    public
-    function submitForm(array &$form, FormStateInterface $form_state)
-    {
-        // Form Values
-        $values = $form_state->getValues();
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state)
+  {
+    // Form Values
+    $values = $form_state->getValues();
+    $token = $values['token'];
 
-        // Redirect Form Url Arguments
-        $arg = [];
+    // Redirect Form Url Arguments
+    $arg = [];
 
-        // Send Newsletter Member
-        if ($values['subscribe'] == 1) {
+    // Send Newsletter Member
+    if ($values['subscribe'] == 1) {
+      try {
+        $result = NewsletterController::newSubscriber($values);
+      } catch (InvalidPluginDefinitionException $e) {
+      } catch (PluginNotFoundException $e) {
+      }
 
-            $result = NewsletterController::newSubscriber($values);
+      if ($result && $result['status']) {
+        $arg['nid'] = (int)$result['nid'];
+        $arg['token'] = $token;
 
-            if ($result && $result['status']) {
-
-
-                $arg['nid'] = intval($result['nid']);
-                $arg['token'] = $result['token'];
-
-                $form_state->setRedirect('smmg_newsletter.thank_you', $arg);
-
-            } else {
-                // Error on create new Member
-                if ($result['message']) {
-                    $this->messenger()->addMessage($result['message'], 'error');
-                }
-            }
+        $form_state->setRedirect('smmg_newsletter.thank_you', $arg);
+      } else {
+        // Error on create new Member
+        if ($result['message']) {
+          $this->messenger()->addMessage($result['message'], 'error');
         }
-
+      }
     }
-
-
+  }
 }
