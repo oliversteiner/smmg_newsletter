@@ -22,17 +22,4 @@ trait NewsletterTrait
   }
 
 
-
-  /**
-   * @param $message
-   * @return string
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  public static function generateMessageHtml($message): string
-  {
-    return Email::generateMessageHtml($message);
-  }
-
-
 }
