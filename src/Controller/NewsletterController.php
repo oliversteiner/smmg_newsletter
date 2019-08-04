@@ -181,6 +181,7 @@ class NewsletterController extends ControllerBase
     $street_and_number = $data['street_and_number'];
     $zip_code = $data['zip_code'];
     $city = $data['city'];
+    $country = $data['country'];
     $phone = $data['phone'];
 
     $member_nid = self::isEmailInUse($email);
@@ -218,6 +219,7 @@ class NewsletterController extends ControllerBase
           'field_street_and_number' => $street_and_number,
           'field_zip_code' => $zip_code,
           'field_city' => $city,
+          'field_country' => $country,
           'field_email' => $email,
           'field_smmg_token' => $token,
           'field_smmg_origin' => $origin_tid,
@@ -357,6 +359,7 @@ class NewsletterController extends ControllerBase
     $variables['address']['street_and_number'] = '';
     $variables['address']['zip_code'] = '';
     $variables['address']['city'] = '';
+    $variables['address']['country'] = '';
     $variables['address']['email'] = '';
     $variables['address']['phone'] = '';
 
@@ -367,7 +370,7 @@ class NewsletterController extends ControllerBase
     $variables['module'] = self::getModuleName();
 
     // Clean Input
-    $nid = (int) trim($nid);
+    $nid = (int)trim($nid);
 
     // Load Terms from Taxonomy
     $gender_list = Helper::getTermsByID('gender');
@@ -390,6 +393,7 @@ class NewsletterController extends ControllerBase
           'gender',
           $gender_list
         );
+
         $variables['address']['first_name'] = Helper::getFieldValue(
           $member,
           'first_name'
@@ -407,6 +411,13 @@ class NewsletterController extends ControllerBase
           'zip_code'
         );
         $variables['address']['city'] = Helper::getFieldValue($member, 'city');
+
+        $variables['address']['country'] = Helper::getFieldValue(
+          $member,
+          'country',
+          $gender_list
+        );
+
         $variables['address']['email'] = Helper::getFieldValue(
           $member,
           'email'
@@ -444,7 +455,8 @@ class NewsletterController extends ControllerBase
     $coupon_order_nid,
     $token = null,
     $output_mode = 'html'
-  ) {
+  )
+  {
     $build = false;
 
     // Get Content
@@ -454,7 +466,7 @@ class NewsletterController extends ControllerBase
     $templates = self::getTemplates();
 
     // HTML Email
-    if ($output_mode == 'html') {
+    if ($output_mode === 'html') {
       // Build HTML Content
       $template = file_get_contents($templates['email_html']);
       $build_html = [
@@ -469,7 +481,7 @@ class NewsletterController extends ControllerBase
     }
 
     // Plaintext
-    if ($output_mode == 'plain') {
+    if ($output_mode === 'plain') {
       // Build Plain Text Content
       $template = file_get_contents($templates['email_plain']);
 
