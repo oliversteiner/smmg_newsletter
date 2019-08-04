@@ -19,6 +19,9 @@ class SubscribeForm extends FormBase
   public $options_gender;
   public $default_gender;
 
+  public $options_country;
+  public $default_country;
+
   /**
    *  constructor.
    */
@@ -28,10 +31,13 @@ class SubscribeForm extends FormBase
     $gender_options[0] = t('Please Chose');
 
     $vid_gender = 'smmg_gender';
-
     $this->options_gender = Helper::getTermsByID($vid_gender);
     $this->options_gender[0] = t('Please Chose');
     $this->default_gender = 0;
+
+    $vid_country = 'smmg_country';
+    $this->options_country = Helper::getTermsByID($vid_country);
+    $this->default_country = 0;
   }
 
   /**
@@ -168,6 +174,15 @@ class SubscribeForm extends FormBase
       '#suffix' => '</div>',
     ];
 
+    $form['postal_address']['country'] = [
+      '#type' => 'select',
+      '#title' => t('Country'),
+      '#default_value' => $this->default_country,
+      '#options' => $this->options_country,
+      '#required' => false,
+      '#prefix' => '<div class="form-group">',
+      '#suffix' => '</div>',
+    ];
     // Phone
     $form['postal_address']['phone'] = [
       '#type' => 'textfield',
