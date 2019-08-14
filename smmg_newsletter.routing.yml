@@ -28,6 +28,17 @@ smmg_newsletter.newsletter:
 #
 # Newsletter subscribe
 #
+smmg_newsletter.subscribe.form:
+  path: 'newsletter/subscribe/form'
+  defaults:
+    _form: '\Drupal\smmg_newsletter\Form\SubscribeForm'
+    _title: 'Subscribe to our Newsletter'
+  requirements:
+    _permission: 'access content'
+
+#
+# Newsletter subscribe
+#
 smmg_newsletter.subscribe:
   path: 'newsletter/subscribe'
   defaults:
@@ -48,16 +59,30 @@ smmg_newsletter.subscribe.email:
     _permission: 'access content'
 
 #
-# Newsletter abbestellen
+# Newsletter abbestellen Form
 #
-smmg_newsletter.unsubscribe:
-  path: 'newsletter/unsubscribe/{nid}'
+smmg_newsletter.unsubscribe.form:
+  path: 'newsletter/unsubscribe/form/{nid}'
   defaults:
     _form: '\Drupal\smmg_newsletter\Form\UnsubscribeForm'
     _title: 'Unsubscribe from our Newsletter'
     nid: null
   requirements:
     _permission: 'access content'
+
+
+#
+# Newsletter abbestellen
+#
+smmg_newsletter.unsubscribe:
+  path: 'newsletter/unsubscribe/{nid}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:unSubscribe'
+    _title: 'Unsubscribe from our Newsletter'
+    nid: null
+  requirements:
+    _permission: 'access content'
+
 #
 # Newsletter Thank You
 #
@@ -92,6 +117,19 @@ smmg_newsletter.sandbox_send_email:
   defaults:
     _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController::sandboxSendEmail'
     _title: 'newsletter Email Test'
+    nid: null
+    token: null
+  requirements:
+    _permission: 'access content'
+
+#
+# Newsletter By By
+#
+smmg_newsletter.opt_in:
+  path: '/newsletter/opt-in/{nid}/{token}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:optInNewsletter'
+    _title: 'Newsletter Opt In'
     nid: null
     token: null
   requirements:

@@ -11,6 +11,7 @@ use Drupal\node\Entity\Node;
 use Drupal\small_messages\Utility\Helper;
 use Drupal\smmg_newsletter\Utility\NewsletterTrait;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Zend\Diactoros\Response\JsonResponse;
 
 class NewsletterController extends ControllerBase
 {
@@ -21,8 +22,8 @@ class NewsletterController extends ControllerBase
    */
   public function landing_page()
   {
-    $url_unsubscribe = Url::fromRoute('smmg_newsletter.unsubscribe');
-    $url_subscribe = Url::fromRoute('smmg_newsletter.subscribe');
+    $url_unsubscribe = Url::fromRoute('smmg_newsletter.unsubscribe.form');
+    $url_subscribe = Url::fromRoute('smmg_newsletter.subscribe.form');
 
     $variables['url']['subscribe'] = $url_subscribe;
     $variables['url']['unsubscribe'] = $url_unsubscribe;
@@ -91,6 +92,8 @@ class NewsletterController extends ControllerBase
    * @return array
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
+   *
+   * @route smmg_newsletter.unsubscribe
    */
   public static function unSubscribe($nid): array
   {
@@ -117,7 +120,7 @@ class NewsletterController extends ControllerBase
 
     // valiade number:
     $nid = trim($nid);
-    $nid = intval($nid);
+    $nid = (int)$nid;
 
     if ($nid !== '') {
       // Load Node
@@ -149,6 +152,89 @@ class NewsletterController extends ControllerBase
     }
 
     return $output;
+  }
+
+  /**
+   * @param null $token
+   * @param null $nid
+   * @return JsonResponse
+   * @throws InvalidPluginDefinitionException
+   * @throws PluginNotFoundException
+   * @throws \Exception
+   *
+   * @route smmg_newsletter.opt_in
+   */
+  public static function optInNewsletter($nid = null,$token = null): JsonResponse
+  {
+    $result = [
+      'status' => false,
+      'mode' => '',
+      'nid' => $nid,
+      'message' => '',
+      'type' => 'status', // status, warning, error
+      'token' => false,
+    ];
+
+    // get ids for smmg_subscriber_group  and 'Newsletter'
+    $term_name = 'Newsletter';
+    $vid = 'smmg_subscriber_group';
+    $tid_newsletter = Helper::getTermIDByName($term_name, $vid);
+
+    // Validate input ID:
+    $nid = trim($nid);
+    $nid = (int)$nid;
+
+    if ($nid) {
+      // Load Node
+      $node = Node::load($nid);
+
+      // Node exists ?
+      if ($node && $node->bundle() === 'smmg_member') {
+
+        // Check Token
+        $token_from_member = Helper::getToken($node);
+
+        // If Token false, return error
+        if($token_from_member !== $token){
+          $result['type'] = 'error';
+          $result['message'] = 'False Token';
+        }
+        else{
+
+
+        // add Member to Group 'Newsletter'
+        // get all Group IDs of Member
+        $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group');
+
+        // if Member is not in Grop 'Newsletter', add him
+        if (!in_array($tid_newsletter, $group_ids, true)) {
+          array_push($group_ids, $tid_newsletter);
+          $node->set('field_smmg_subscriber_group', $group_ids);
+        }
+
+        // Save Subscription
+        $node->set('field_smmg_accept_newsletter', 1);
+
+        try {
+          $node->save();
+          // Get Token
+          $result['token'] = Helper::getToken($node);
+          $result['status'] = true;
+        } catch (EntityStorageException $e) {
+          $result['type'] = 'error';
+          $result['message'] = 'Can\'t Save Node';
+
+        }
+      }
+      }
+
+    }
+    else{
+      $result['type'] = 'error';
+      $result['message'] = 'No Node found with ID: '.$nid;
+
+    }
+    return new JsonResponse($result);
   }
 
   /**
