@@ -204,7 +204,7 @@ class NewsletterController extends ControllerBase
 
         // add Member to Group 'Newsletter'
         // get all Group IDs of Member
-        $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group');
+        $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group', false, true);
 
         // if Member is not in Grop 'Newsletter', add him
         if (!in_array($tid_newsletter, $group_ids, true)) {
