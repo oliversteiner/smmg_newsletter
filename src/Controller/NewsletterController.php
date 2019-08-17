@@ -92,12 +92,27 @@ class NewsletterController extends ControllerBase
    * @return array
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
+   * @throws \Exception
    *
    * @route smmg_newsletter.unsubscribe
    */
   public static function unSubscribe($nid): array
   {
-    return self::updateSubscriber($nid, false);
+     $result = self::updateSubscriber($nid, false);
+
+  // get Template
+    $templates = self::getTemplates();
+    $template = file_get_contents($templates['bye_bye']);
+
+    $build = [
+      'description' => [
+        '#type' => 'inline_template',
+        '#template' => $template,
+        '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
+        '#context' => self::newsletterVariables($nid, $result['token']),
+      ],
+    ];
+    return $build;
   }
 
   /**
@@ -109,6 +124,13 @@ class NewsletterController extends ControllerBase
    */
   public static function updateSubscriber($nid = null, $subscribe = true): array
   {
+    // valiade number:
+    $nid = trim($nid);
+
+    if (!is_numeric($nid)) {
+      throw new AccessDeniedHttpException();
+    }
+
     $output = [
       'status' => false,
       'mode' => '',
@@ -118,9 +140,7 @@ class NewsletterController extends ControllerBase
       'token' => false,
     ];
 
-    // valiade number:
-    $nid = trim($nid);
-    $nid = (int)$nid;
+
 
     if ($nid !== '') {
       // Load Node
