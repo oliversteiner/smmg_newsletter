@@ -7,3 +7,34 @@ smmg_newsletter.main:
   dependencies:
     - core/jquery
     - core/jquery.once
+
+smmg_newsletter.admin:
+  js:
+    assets/js/mollo-newsletter-analytics.min.js: {}
+  dependencies:
+    - smmg_newsletter/vue
+    - smmg_newsletter/vue-router
+
+vue-router:
+  remote: https://unpkg.com/vue-router/dist/vue-router.min.js
+  version: 3.0.1
+  license:
+    name: MIT
+  js:
+    https://unpkg.com/vue-router/dist/vue-router.min.js: { type: external, minified: true }
+
+vue:
+  remote: https://unpkg.com/vue@2.5.9/dist/vue.js
+  version: 2.5.9
+  license:
+    name: MIT
+  js:
+    https://unpkg.com/vue@2.5.13/dist/vue.js: { type: external, minified: true }
+
+analytics:
+  css:
+    theme:
+      analytics/app.css: {}
+  js:
+    analytics/app.js:  {}
+

@@ -134,3 +134,11 @@ smmg_newsletter.opt_in:
     token: null
   requirements:
     _permission: 'access content'
+
+smmg_newsletter.analytics:
+  path: '/admin/newsletter/analytics'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\AnalyticController::analyticsPage'
+    _title: 'Analytics'
+  requirements:
+    _permission: 'access content'
