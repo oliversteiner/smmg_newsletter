@@ -9,6 +9,8 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\small_messages\Utility\Helper;
+use Drupal\smmg_member\Types\Member;
+use Drupal\smmg_newsletter\Types\Newsletter;
 use Drupal\smmg_newsletter\Utility\NewsletterTrait;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Zend\Diactoros\Response\JsonResponse;
@@ -98,9 +100,9 @@ class NewsletterController extends ControllerBase
    */
   public static function unSubscribe($nid): array
   {
-     $result = self::updateSubscriber($nid, false);
+    $result = self::updateSubscriber($nid, false);
 
-  // get Template
+    // get Template
     $templates = self::getTemplates();
     $template = file_get_contents($templates['bye_bye']);
 
@@ -139,7 +141,6 @@ class NewsletterController extends ControllerBase
       'type' => 'status', // status, warning, error
       'token' => false,
     ];
-
 
 
     if ($nid !== '') {
@@ -184,7 +185,7 @@ class NewsletterController extends ControllerBase
    *
    * @route smmg_newsletter.opt_in
    */
-  public static function optInNewsletter($nid = null,$token = null): JsonResponse
+  public static function optInNewsletter($nid = null, $token = null): JsonResponse
   {
     $result = [
       'status' => false,
@@ -215,43 +216,41 @@ class NewsletterController extends ControllerBase
         $token_from_member = Helper::getToken($node);
 
         // If Token false, return error
-        if($token_from_member !== $token){
+        if ($token_from_member !== $token) {
           $result['type'] = 'error';
           $result['message'] = 'False Token';
-        }
-        else{
+        } else {
 
 
-        // add Member to Group 'Newsletter'
-        // get all Group IDs of Member
-        $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group', false, true);
+          // add Member to Group 'Newsletter'
+          // get all Group IDs of Member
+          $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group', false, true);
 
-        // if Member is not in Grop 'Newsletter', add him
-        if (!in_array($tid_newsletter, $group_ids, true)) {
-          array_push($group_ids, $tid_newsletter);
-          $node->set('field_smmg_subscriber_group', $group_ids);
-        }
+          // if Member is not in Grop 'Newsletter', add him
+          if (!in_array($tid_newsletter, $group_ids, true)) {
+            array_push($group_ids, $tid_newsletter);
+            $node->set('field_smmg_subscriber_group', $group_ids);
+          }
 
-        // Save Subscription
-        $node->set('field_smmg_accept_newsletter', 1);
+          // Save Subscription
+          $node->set('field_smmg_accept_newsletter', 1);
 
-        try {
-          $node->save();
-          // Get Token
-          $result['token'] = Helper::getToken($node);
-          $result['status'] = true;
-        } catch (EntityStorageException $e) {
-          $result['type'] = 'error';
-          $result['message'] = 'Can\'t Save Node';
+          try {
+            $node->save();
+            // Get Token
+            $result['token'] = Helper::getToken($node);
+            $result['status'] = true;
+          } catch (EntityStorageException $e) {
+            $result['type'] = 'error';
+            $result['message'] = 'Can\'t Save Node';
 
+          }
         }
       }
-      }
 
-    }
-    else{
+    } else {
       $result['type'] = 'error';
-      $result['message'] = 'No Node found with ID: '.$nid;
+      $result['message'] = 'No Node found with ID: ' . $nid;
 
     }
     return new JsonResponse($result);
@@ -646,4 +645,81 @@ class NewsletterController extends ControllerBase
     $template_names = self::getTemplateNames();
     return Helper::getTemplates($module, $template_names);
   }
+
+  public static function APINewsletter($id): JsonResponse
+  {
+
+    $Newsletter = new Newsletter($id);
+    $data = $Newsletter->getData();
+    return new JsonResponse($data);
+  }
+
+  public static function APINewsletters($start = 0, $length = 0, $subscriber_group = false): JsonResponse
+  {
+
+    $Newsletters = [];
+    $message = [];
+
+    // Search all Members
+    // Query with entity_type.manager
+    $query = \Drupal::entityTypeManager()->getStorage('node');
+    $query_count = $query->getQuery()
+      ->condition('type', Newsletter::type)
+      ->sort('created', 'ASC')
+      ->count()
+      ->execute();
+
+    // Count Members
+    $number_of = $query_count;
+
+    // if nothing found
+    if ($number_of === 0) {
+      $response = ['message' => 'no ' . Newsletter::name . ' found', 'count' => 0];
+      return new JsonResponse($response);
+    }
+
+    // get Nids
+    if ($subscriber_group) {
+      $message[] = 'filter subscriber_group: ' . (int)$subscriber_group;
+      $query_result = $query->getQuery()
+        ->condition('type', Newsletter::type)
+        ->sort('created', 'ASC')
+        ->range($start, $length)
+        ->condition(Newsletter::field_subscriber_group, (int)$subscriber_group, 'IN')
+        ->execute();
+    } else {
+      $query_result = $query->getQuery()
+        ->condition('type', Newsletter::type)
+        ->sort('created', 'ASC')
+        ->range((int)$start, (int)$length)
+        ->execute();
+    }
+
+
+    $set = count($query_result);
+
+    // Load Data
+    foreach ($query_result as $nid) {
+      $newsletter = new Newsletter($nid);
+      $Newsletters[] = $newsletter->getData();
+    }
+
+
+    // build Response
+    $response = [
+      'message' => $message,
+      'count' => (int)$number_of,
+      'set' => (int)$set,
+      'start' => (int)$start,
+      'length' => (int)$length,
+      'subscriber_group' => (int)$subscriber_group,
+      'newsletters' => $Newsletters,
+      'nids' => $query_result,
+    ];
+
+    // return JSON
+    return new JsonResponse($response);
+  }
+
+
 }

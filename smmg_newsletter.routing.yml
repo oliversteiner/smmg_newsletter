@@ -142,3 +142,25 @@ smmg_newsletter.analytics:
     _title: 'Analytics'
   requirements:
     _permission: 'access content'
+
+#
+# API
+#
+smmg_newsletter.api.newsletter:
+  path: 'smmg/api/newsletter/{id}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APINewsletter'
+    nid: null
+  requirements:
+    _permission: 'administer content'
+
+
+smmg_newsletter.api.newsletters:
+  path: 'smmg/api/newsletters/{start}/{length}/{subscriber_group}'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APINewsletters'
+    start: 0
+    length: 500
+    subscriber_group: false
+  requirements:
+    _permission: 'administer content'
