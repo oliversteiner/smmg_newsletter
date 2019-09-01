@@ -8,6 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\small_messages\Types\Message;
 use Drupal\small_messages\Utility\Helper;
 use Drupal\smmg_member\Types\Member;
 use Drupal\smmg_newsletter\Types\Newsletter;
@@ -18,6 +19,18 @@ use Zend\Diactoros\Response\JsonResponse;
 class NewsletterController extends ControllerBase
 {
   use NewsletterTrait;
+
+  private static function countAllSubscribers($tid)
+  {
+    $query = \Drupal::entityTypeManager()->getStorage('node');
+    $query_count = $query->getQuery()
+      ->condition('type', Member::type)
+      ->condition(Member::field_subscriber_group, $tid)
+      ->count()
+      ->execute();
+
+    return $query_count;
+  }
 
   /**
    * @return mixed
@@ -98,9 +111,9 @@ class NewsletterController extends ControllerBase
    *
    * @route smmg_newsletter.unsubscribe
    */
-  public static function unSubscribe($nid): array
+  public static function unSubscribe($nid, $message_id=null): array
   {
-    $result = self::updateSubscriber($nid, false);
+    $result = self::updateSubscriber($nid, false, $message_id);
 
     // get Template
     $templates = self::getTemplates();
@@ -124,8 +137,11 @@ class NewsletterController extends ControllerBase
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
    */
-  public static function updateSubscriber($nid = null, $subscribe = true): array
+  public static function updateSubscriber($nid = null, $subscribe = true, $message_id = null): array
   {
+
+    // TODO add unsubscribe to json_data
+
     // valiade number:
     $nid = trim($nid);
 
@@ -143,16 +159,17 @@ class NewsletterController extends ControllerBase
     ];
 
 
-    if ($nid !== '') {
+    if ($nid) {
       // Load Node
       $entity = \Drupal::entityTypeManager()
         ->getStorage('node')
         ->load($nid);
 
       // Node exists ?
-      if ($entity && $entity->bundle() == 'smmg_member') {
+      if ($entity && $entity->bundle() === 'smmg_member') {
         // Save Subscription
         $entity->get('field_smmg_accept_newsletter')->setValue($subscribe);
+
         try {
           $entity->save();
           // Get Token
@@ -660,16 +677,16 @@ class NewsletterController extends ControllerBase
     $Newsletters = [];
     $message = [];
 
-    // Search all Members
+    // Search all Newsletters
     // Query with entity_type.manager
     $query = \Drupal::entityTypeManager()->getStorage('node');
     $query_count = $query->getQuery()
       ->condition('type', Newsletter::type)
-      ->sort('created', 'ASC')
+      ->sort('changed', 'ASC')
       ->count()
       ->execute();
 
-    // Count Members
+    // Count Newsletters
     $number_of = $query_count;
 
     // if nothing found
@@ -680,7 +697,7 @@ class NewsletterController extends ControllerBase
 
     // get Nids
     if ($subscriber_group) {
-      $message[] = 'filter subscriber_group: ' . (int)$subscriber_group;
+      $message[] = 'filter '.Newsletter::field_subscriber_group.': ' . (int)$subscriber_group;
       $query_result = $query->getQuery()
         ->condition('type', Newsletter::type)
         ->sort('created', 'ASC')
@@ -712,13 +729,31 @@ class NewsletterController extends ControllerBase
       'set' => (int)$set,
       'start' => (int)$start,
       'length' => (int)$length,
-      'subscriber_group' => (int)$subscriber_group,
+      'subscriberGroup' => (int)$subscriber_group,
       'newsletters' => $Newsletters,
       'nids' => $query_result,
     ];
 
     // return JSON
     return new JsonResponse($response);
+  }
+
+  function APISubscriberGroups(){
+
+    $vid = 'smmg_subscriber_group';
+    $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+    foreach ($terms as $term) {
+
+
+      $term_data[] = array(
+        'id' => $term->tid,
+        'name' => $term->name,
+        'subscribers' =>self::countAllSubscribers($term->tid),
+      );
+    }
+
+
+    return new JsonResponse($term_data);
   }
 
 

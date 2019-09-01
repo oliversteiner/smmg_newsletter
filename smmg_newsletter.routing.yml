@@ -75,11 +75,12 @@ smmg_newsletter.unsubscribe.form:
 # Newsletter abbestellen
 #
 smmg_newsletter.unsubscribe:
-  path: 'newsletter/unsubscribe/{nid}'
+  path: 'newsletter/unsubscribe/{nid}/{message_id}'
   defaults:
     _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:unSubscribe'
     _title: 'Unsubscribe from our Newsletter'
     nid: null
+    message_id: null
   requirements:
     _permission: 'access content'
 
@@ -164,4 +165,12 @@ smmg_newsletter.api.newsletters:
     subscriber_group: false
   requirements:
 #    _permission: 'administer content'
+    _permission: 'access content' # TODO Warning! use only for development
+
+smmg_newsletter.api.subscribergroups:
+  path: 'smmg/api/subscriberGroups'
+  defaults:
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APISubscriberGroups'
+  requirements:
+    #    _permission: 'administer content'
     _permission: 'access content' # TODO Warning! use only for development
