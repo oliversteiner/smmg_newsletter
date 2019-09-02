@@ -20,10 +20,11 @@ class NewsletterController extends ControllerBase
 {
   use NewsletterTrait;
 
-  private static function countAllSubscribers($tid)
+  public static function countAllSubscribers($tid)
   {
     $query = \Drupal::entityTypeManager()->getStorage('node');
-    $query_count = $query->getQuery()
+    $query_count = $query
+      ->getQuery()
       ->condition('type', Member::type)
       ->condition(Member::field_subscriber_group, $tid)
       ->count()
@@ -111,7 +112,7 @@ class NewsletterController extends ControllerBase
    *
    * @route smmg_newsletter.unsubscribe
    */
-  public static function unSubscribe($nid, $message_id=null): array
+  public static function unSubscribe($nid, $message_id = null): array
   {
     $result = self::updateSubscriber($nid, false, $message_id);
 
@@ -137,9 +138,11 @@ class NewsletterController extends ControllerBase
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
    */
-  public static function updateSubscriber($nid = null, $subscribe = true, $message_id = null): array
-  {
-
+  public static function updateSubscriber(
+    $nid = null,
+    $subscribe = true,
+    $message_id = null
+  ): array {
     // TODO add unsubscribe to json_data
 
     // valiade number:
@@ -157,7 +160,6 @@ class NewsletterController extends ControllerBase
       'type' => 'status', // status, warning, error
       'token' => false,
     ];
-
 
     if ($nid) {
       // Load Node
@@ -202,8 +204,10 @@ class NewsletterController extends ControllerBase
    *
    * @route smmg_newsletter.opt_in
    */
-  public static function optInNewsletter($nid = null, $token = null): JsonResponse
-  {
+  public static function optInNewsletter(
+    $nid = null,
+    $token = null
+  ): JsonResponse {
     $result = [
       'status' => false,
       'mode' => '',
@@ -220,7 +224,7 @@ class NewsletterController extends ControllerBase
 
     // Validate input ID:
     $nid = trim($nid);
-    $nid = (int)$nid;
+    $nid = (int) $nid;
 
     if ($nid) {
       // Load Node
@@ -228,7 +232,6 @@ class NewsletterController extends ControllerBase
 
       // Node exists ?
       if ($node && $node->bundle() === 'smmg_member') {
-
         // Check Token
         $token_from_member = Helper::getToken($node);
 
@@ -237,11 +240,14 @@ class NewsletterController extends ControllerBase
           $result['type'] = 'error';
           $result['message'] = 'False Token';
         } else {
-
-
           // add Member to Group 'Newsletter'
           // get all Group IDs of Member
-          $group_ids = Helper::getFieldValue($node, 'smmg_subscriber_group', false, true);
+          $group_ids = Helper::getFieldValue(
+            $node,
+            'smmg_subscriber_group',
+            false,
+            true
+          );
 
           // if Member is not in Grop 'Newsletter', add him
           if (!in_array($tid_newsletter, $group_ids, true)) {
@@ -260,15 +266,12 @@ class NewsletterController extends ControllerBase
           } catch (EntityStorageException $e) {
             $result['type'] = 'error';
             $result['message'] = 'Can\'t Save Node';
-
           }
         }
       }
-
     } else {
       $result['type'] = 'error';
       $result['message'] = 'No Node found with ID: ' . $nid;
-
     }
     return new JsonResponse($result);
   }
@@ -492,7 +495,7 @@ class NewsletterController extends ControllerBase
     $variables['module'] = self::getModuleName();
 
     // Clean Input
-    $nid = (int)trim($nid);
+    $nid = (int) trim($nid);
 
     // Load Terms from Taxonomy
     $gender_list = Helper::getTermsByID('gender');
@@ -577,8 +580,7 @@ class NewsletterController extends ControllerBase
     $coupon_order_nid,
     $token = null,
     $output_mode = 'html'
-  )
-  {
+  ) {
     $build = false;
 
     // Get Content
@@ -665,22 +667,24 @@ class NewsletterController extends ControllerBase
 
   public static function APINewsletter($id): JsonResponse
   {
-
     $Newsletter = new Newsletter($id);
     $data = $Newsletter->getData();
     return new JsonResponse($data);
   }
 
-  public static function APINewsletters($start = 0, $length = 0, $subscriber_group = false): JsonResponse
-  {
-
+  public static function APINewsletters(
+    $start = 0,
+    $length = 0,
+    $subscriber_group = false
+  ): JsonResponse {
     $Newsletters = [];
     $message = [];
 
     // Search all Newsletters
     // Query with entity_type.manager
     $query = \Drupal::entityTypeManager()->getStorage('node');
-    $query_count = $query->getQuery()
+    $query_count = $query
+      ->getQuery()
       ->condition('type', Newsletter::type)
       ->sort('changed', 'ASC')
       ->count()
@@ -691,27 +695,39 @@ class NewsletterController extends ControllerBase
 
     // if nothing found
     if ($number_of === 0) {
-      $response = ['message' => 'no ' . Newsletter::name . ' found', 'count' => 0];
+      $response = [
+        'message' => 'no ' . Newsletter::name . ' found',
+        'count' => 0,
+      ];
       return new JsonResponse($response);
     }
 
     // get Nids
     if ($subscriber_group) {
-      $message[] = 'filter '.Newsletter::field_subscriber_group.': ' . (int)$subscriber_group;
-      $query_result = $query->getQuery()
+      $message[] =
+        'filter ' .
+        Newsletter::field_subscriber_group .
+        ': ' .
+        (int) $subscriber_group;
+      $query_result = $query
+        ->getQuery()
         ->condition('type', Newsletter::type)
         ->sort('created', 'ASC')
         ->range($start, $length)
-        ->condition(Newsletter::field_subscriber_group, (int)$subscriber_group, 'IN')
+        ->condition(
+          Newsletter::field_subscriber_group,
+          (int) $subscriber_group,
+          'IN'
+        )
         ->execute();
     } else {
-      $query_result = $query->getQuery()
+      $query_result = $query
+        ->getQuery()
         ->condition('type', Newsletter::type)
         ->sort('created', 'ASC')
-        ->range((int)$start, (int)$length)
+        ->range((int) $start, (int) $length)
         ->execute();
     }
-
 
     $set = count($query_result);
 
@@ -721,15 +737,14 @@ class NewsletterController extends ControllerBase
       $Newsletters[] = $newsletter->getData();
     }
 
-
     // build Response
     $response = [
       'message' => $message,
-      'count' => (int)$number_of,
-      'set' => (int)$set,
-      'start' => (int)$start,
-      'length' => (int)$length,
-      'subscriberGroup' => (int)$subscriber_group,
+      'count' => (int) $number_of,
+      'set' => (int) $set,
+      'start' => (int) $start,
+      'length' => (int) $length,
+      'subscriberGroup' => (int) $subscriber_group,
       'newsletters' => $Newsletters,
       'nids' => $query_result,
     ];
@@ -738,23 +753,22 @@ class NewsletterController extends ControllerBase
     return new JsonResponse($response);
   }
 
-  function APISubscriberGroups(){
-
+  function APISubscriberGroups()
+  {
     $vid = 'smmg_subscriber_group';
-    $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+    $terms = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree($vid);
     foreach ($terms as $term) {
-
-
       $term_data[] = array(
-        'id' => $term->tid,
+        'id' => (int) $term->tid,
         'name' => $term->name,
-        'subscribers' =>self::countAllSubscribers($term->tid),
+        'subscribers' => (int) self::countAllSubscribers($term->tid),
       );
     }
 
+    $response = ['subscriberGroups' => $term_data];
 
-    return new JsonResponse($term_data);
+    return new JsonResponse($response);
   }
-
-
 }
