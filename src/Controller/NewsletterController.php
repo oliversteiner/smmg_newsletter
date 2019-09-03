@@ -712,7 +712,7 @@ class NewsletterController extends ControllerBase
       $query_result = $query
         ->getQuery()
         ->condition('type', Newsletter::type)
-        ->sort('created', 'ASC')
+        ->sort('changed', 'DESC')
         ->range($start, $length)
         ->condition(
           Newsletter::field_subscriber_group,
@@ -724,17 +724,20 @@ class NewsletterController extends ControllerBase
       $query_result = $query
         ->getQuery()
         ->condition('type', Newsletter::type)
-        ->sort('created', 'ASC')
+        ->sort('changed', 'DESC')
         ->range((int) $start, (int) $length)
         ->execute();
     }
 
+    $message = 'v5';
     $set = count($query_result);
+    $ids = [];
 
     // Load Data
     foreach ($query_result as $nid) {
       $newsletter = new Newsletter($nid);
       $Newsletters[] = $newsletter->getData();
+      $ids[] = (int)$nid;
     }
 
     // build Response
@@ -746,7 +749,7 @@ class NewsletterController extends ControllerBase
       'length' => (int) $length,
       'subscriberGroup' => (int) $subscriber_group,
       'newsletters' => $Newsletters,
-      'nids' => $query_result,
+      'ids' => $ids,
     ];
 
     // return JSON
