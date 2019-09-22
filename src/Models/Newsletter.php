@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\smmg_newsletter\Types;
+namespace Drupal\smmg_newsletter\Models;
 
 use Drupal\node\Entity\Node;
 use Drupal\small_messages\Models\Message;
