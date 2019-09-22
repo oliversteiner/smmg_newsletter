@@ -8,7 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\small_messages\Types\Message;
+use Drupal\small_messages\Models\Message;
 use Drupal\small_messages\Utility\Helper;
 use Drupal\smmg_member\Types\Member;
 use Drupal\smmg_newsletter\Types\Newsletter;
