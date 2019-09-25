@@ -84,6 +84,7 @@ smmg_newsletter.unsubscribe:
   requirements:
     _permission: 'access content'
 
+
 #
 # Newsletter Thank You
 #
