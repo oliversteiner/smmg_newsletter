@@ -168,10 +168,11 @@ smmg_newsletter.api.newsletters:
 #    _permission: 'administer content'
     _permission: 'access content' # TODO Warning! use only for development
 
-smmg_newsletter.api.subscribergroups:
-  path: 'smmg/api/subscriberGroups'
+# Category
+smmg_newsletter.api.category:
+  path: 'smmg/api/terms/category'
   defaults:
-    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APISubscriberGroups'
+    _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APITermsCategory'
   requirements:
     #    _permission: 'administer content'
     _permission: 'access content' # TODO Warning! use only for development

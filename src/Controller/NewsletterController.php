@@ -19,18 +19,7 @@ class NewsletterController extends ControllerBase
 {
   use NewsletterTrait;
 
-  public static function countAllSubscribers($tid)
-  {
-    $query = \Drupal::entityTypeManager()->getStorage('node');
-    $query_count = $query
-      ->getQuery()
-      ->condition('type', Member::type)
-      ->condition(Member::field_subscriber_group, $tid)
-      ->count()
-      ->execute();
 
-    return $query_count;
-  }
 
   /**
    * @return mixed
@@ -755,22 +744,45 @@ class NewsletterController extends ControllerBase
     return new JsonResponse($response);
   }
 
-  function APISubscriberGroups()
+
+  public static function countNewsletterInCategory($field, $tid)
   {
-    $vid = 'smmg_subscriber_group';
-    $terms = \Drupal::entityTypeManager()
+    $query = \Drupal::entityTypeManager()->getStorage('node');
+    $query_count = $query
+      ->getQuery()
+      ->condition('type', Newsletter::type)
+      ->condition($field, $tid)
+      ->count()
+      ->execute();
+
+    return $query_count;
+  }
+
+
+  function APITermsCategory()
+  {
+    $name = 'category';
+    $vocabulary = Newsletter::term_category;
+    $field= Newsletter::field_subscriber_group;
+    $terms = [];
+
+    $nodes = \Drupal::entityTypeManager()
       ->getStorage('taxonomy_term')
-      ->loadTree($vid);
-    foreach ($terms as $term) {
-      $term_data[] = array(
-        'id' => (int) $term->tid,
-        'name' => $term->name,
-        'subscribers' => (int) self::countAllSubscribers($term->tid),
+      ->loadTree($vocabulary);
+    foreach ($nodes as $node) {
+      $terms[] = array(
+        'id' => (int)$node->tid,
+        'name' => $node->name,
+        'count' => (int)self::countNewsletterInCategory($field, $node->tid),
       );
     }
 
-    $response = ['subscriberGroups' => $term_data];
+    $response = [
+      'name' => 'api/terms/'.$name,
+      'version' => '1.0.0',
+      'terms' => $terms];
 
     return new JsonResponse($response);
   }
+
 }
