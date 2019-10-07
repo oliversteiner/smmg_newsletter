@@ -19,6 +19,7 @@ class NewsletterController extends ControllerBase
 {
   use NewsletterTrait;
 
+  public const Module_Name = 'smmg_newsletter';
 
 
   /**
@@ -26,8 +27,8 @@ class NewsletterController extends ControllerBase
    */
   public function landing_page()
   {
-    $url_unsubscribe = Url::fromRoute('smmg_newsletter.unsubscribe.form');
-    $url_subscribe = Url::fromRoute('smmg_newsletter.subscribe.form');
+    $url_unsubscribe = Url::fromRoute(Newsletter::module.'.unsubscribe.form');
+    $url_subscribe = Url::fromRoute(Newsletter::module.'.subscribe.form');
 
     $variables['url']['subscribe'] = $url_subscribe;
     $variables['url']['unsubscribe'] = $url_unsubscribe;
@@ -39,7 +40,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
+        '#attached' => ['library' => [Newsletter::module.'/smmg_newsletter.main']],
         '#context' => $variables,
       ],
     ];
@@ -112,7 +113,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
+        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $result['token']),
       ],
     ];
@@ -420,7 +421,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
+        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $token),
       ],
     ];
@@ -449,7 +450,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => ['smmg_newsletter/smmg_newsletter.main']],
+        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $token),
       ],
     ];
@@ -648,7 +649,7 @@ class NewsletterController extends ControllerBase
    */
   public static function getTemplates(): array
   {
-    $module = 'smmg_newsletter';
+    $module = Newsletter::module;
     $template_names = self::getTemplateNames();
     return Helper::getTemplates($module, $template_names);
   }
