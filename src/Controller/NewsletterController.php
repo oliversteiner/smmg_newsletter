@@ -113,7 +113,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
+        '#attached' => ['library' => [Newsletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $result['token']),
       ],
     ];
@@ -421,7 +421,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
+        '#attached' => ['library' => [Newsletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $token),
       ],
     ];
@@ -450,7 +450,7 @@ class NewsletterController extends ControllerBase
       'description' => [
         '#type' => 'inline_template',
         '#template' => $template,
-        '#attached' => ['library' => [Nesletter::module.'/smmg_newsletter.main']],
+        '#attached' => ['library' => [Newsletter::module.'/smmg_newsletter.main']],
         '#context' => self::newsletterVariables($nid, $token),
       ],
     ];
