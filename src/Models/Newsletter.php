@@ -29,7 +29,7 @@ class Newsletter extends Message
   public const module = 'smmg_message';
 
   public const field_design_template = 'field_smmg_design_template';
-  public const field_is_send = ' field_smmg_message_is_send';
+  public const field_is_send = 'field_smmg_message_is_send';
   public const field_is_template = 'field_smmg_message_is_template';
   public const field_category = 'field_smmg_message_group';
   public const field_text = 'field_smmg_message_text';
