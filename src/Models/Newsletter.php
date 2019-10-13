@@ -26,7 +26,7 @@ class Newsletter extends Message
 {
   public const name = 'Newsletter';
   public const type = 'smmg_message';
-  public const module = 'smmg_message';
+  public const module = 'smmg_newsletter';
 
   public const field_design_template = 'field_smmg_design_template';
   public const field_is_send = 'field_smmg_message_is_send';

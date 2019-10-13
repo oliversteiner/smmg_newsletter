@@ -94,11 +94,10 @@ class NewsletterController extends ControllerBase
 
   /**
    * @param $nid
+   * @param null $message_id
    * @return array
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
-   * @throws \Exception
-   *
    * @route smmg_newsletter.unsubscribe
    */
   public static function unSubscribe($nid, $message_id = null): array

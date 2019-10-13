@@ -102,6 +102,16 @@ class NewsletterSettingsForm extends ConfigFormBase
       '#default_value' => $config->get('email_exclude')
     );
 
+
+    // - Invalid Email List
+    $form['email']['invalid_email'] = array(
+      '#type' => 'textarea',
+      '#title' => $this->t(
+        'Invalid Email List, Separate with comma'
+      ),
+      '#default_value' => $config->get('invalid_email')
+    );
+
     // Fieldset Twig Templates Root Path
     // -------------------------------------------------------------
 
@@ -190,6 +200,8 @@ class NewsletterSettingsForm extends ConfigFormBase
       ->set('email_test', $form_state->getValue('email_test'))
       // - email_exclude
       ->set('email_exclude', $form_state->getValue('email_exclude'))
+      // - invalid email list
+      ->set('invalid_email', $form_state->getValue('invalid_email'))
       //
       //
       // Fieldset Twig Templates Root Path
