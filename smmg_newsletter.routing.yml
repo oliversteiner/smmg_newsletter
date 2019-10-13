@@ -154,8 +154,8 @@ smmg_newsletter.api.newsletter:
     _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APINewsletter'
     nid: null
   requirements:
-    #    _permission: 'administer content'
-    _permission: 'access content' # TODO Warning! use only for development
+    _permission: 'administer content'
+   # _permission: 'access content' # TODO Warning! use only for development
 
 smmg_newsletter.api.newsletters:
   path: 'smmg/api/newsletters/{start}/{length}/{subscriber_group}'
@@ -165,8 +165,8 @@ smmg_newsletter.api.newsletters:
     length: 500
     subscriber_group: false
   requirements:
-#    _permission: 'administer content'
-    _permission: 'access content' # TODO Warning! use only for development
+    _permission: 'administer content'
+  #  _permission: 'access content' # TODO Warning! use only for development
 
 # Category
 smmg_newsletter.api.category:
@@ -174,5 +174,5 @@ smmg_newsletter.api.category:
   defaults:
     _controller: '\Drupal\smmg_newsletter\Controller\NewsletterController:APITermsCategory'
   requirements:
-    #    _permission: 'administer content'
-    _permission: 'access content' # TODO Warning! use only for development
+    _permission: 'administer content'
+  #  _permission: 'access content' # TODO Warning! use only for development
