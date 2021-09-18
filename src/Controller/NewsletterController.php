@@ -6,14 +6,14 @@ use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\small_messages\Utility\Helper;
-use Drupal\smmg_member\Models\Member;
 use Drupal\smmg_newsletter\Models\Newsletter;
 use Drupal\smmg_newsletter\Utility\NewsletterTrait;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Zend\Diactoros\Response\JsonResponse;
 
 class NewsletterController extends ControllerBase
 {
@@ -759,7 +759,7 @@ class NewsletterController extends ControllerBase
   }
 
 
-  function APITermsCategory()
+  function APITermsCategory(): JsonResponse
   {
     $name = 'category';
     $vocabulary = Newsletter::term_category;
@@ -777,7 +777,11 @@ class NewsletterController extends ControllerBase
       );
     }
 
+    /* DEV: Insert Mollo Token from /site/files/settings.php */
+    $token = Settings::get('mollo')->token;
+
     $response = [
+      'token' => $token,
       'name' => 'api/terms/'.$name,
       'version' => '1.0.0',
       'terms' => $terms];
