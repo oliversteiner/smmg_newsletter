@@ -8,8 +8,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Url;
+use Drupal\mollo_utils\Utility\MolloUtils;
 use Drupal\node\Entity\Node;
-use Drupal\small_messages\Utility\Helper;
 use Drupal\smmg_newsletter\Models\Newsletter;
 use Drupal\smmg_newsletter\Utility\NewsletterTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,7 +54,7 @@ class NewsletterController extends ControllerBase
   public static function subscribeDirect($email = null): array
   {
     $email = trim($email);
-    $token = Helper::generateToken();
+    $token = MolloUtils::generateToken();
 
     $valid_email = \Drupal::service('email.validator')->isValid($email);
 
@@ -163,7 +163,7 @@ class NewsletterController extends ControllerBase
         try {
           $entity->save();
           // Get Token
-          $output['token'] = Helper::getToken($entity);
+          $output['token'] = MolloUtils::getToken($entity);
           $output['status'] = true;
         } catch (EntityStorageException $e) {
         }
@@ -208,7 +208,7 @@ class NewsletterController extends ControllerBase
     // get ids for smmg_subscriber_group  and 'Newsletter'
     $term_name = 'Newsletter';
     $vid = 'smmg_subscriber_group';
-    $tid_newsletter = Helper::getTermIDByName($term_name, $vid);
+    $tid_newsletter = MolloUtils::getTermIDByName($term_name, $vid);
 
     // Validate input ID:
     $nid = trim($nid);
@@ -221,7 +221,7 @@ class NewsletterController extends ControllerBase
       // Node exists ?
       if ($node && $node->bundle() === 'smmg_member') {
         // Check Token
-        $token_from_member = Helper::getToken($node);
+        $token_from_member = MolloUtils::getToken($node);
 
         // If Token false, return error
         if ($token_from_member !== $token) {
@@ -230,7 +230,7 @@ class NewsletterController extends ControllerBase
         } else {
           // add Member to Group 'Newsletter'
           // get all Group IDs of Member
-          $group_ids = Helper::getFieldValue(
+          $group_ids = MolloUtils::getFieldValue(
             $node,
             'smmg_subscriber_group',
             false,
@@ -249,7 +249,7 @@ class NewsletterController extends ControllerBase
           try {
             $node->save();
             // Get Token
-            $result['token'] = Helper::getToken($node);
+            $result['token'] = MolloUtils::getToken($node);
             $result['status'] = true;
           } catch (EntityStorageException $e) {
             $result['type'] = 'error';
@@ -319,7 +319,7 @@ class NewsletterController extends ControllerBase
       try {
         // Origin
         $origin = 'Newsletter';
-        $origin_tid = Helper::getOrigin($origin);
+        $origin_tid = MolloUtils::getOrigin($origin);
 
         $storage = \Drupal::entityTypeManager()->getStorage('node');
         $new_member = $storage->create([
@@ -486,7 +486,7 @@ class NewsletterController extends ControllerBase
     $nid = (int) trim($nid);
 
     // Load Terms from Taxonomy
-    $gender_list = Helper::getTermsByID('gender');
+    $gender_list = MolloUtils::getTermsByID('gender');
 
     // Member & Newsletter
     if ($nid) {
@@ -494,54 +494,54 @@ class NewsletterController extends ControllerBase
 
       if ($member && $member->bundle() == 'smmg_member') {
         // Check Token
-        $node_token = Helper::getFieldValue($member, 'smmg_token');
+        $node_token = MolloUtils::getFieldValue($member, 'smmg_token');
 
         if ($token != $node_token) {
           throw new AccessDeniedHttpException();
         }
 
         // Address
-        $variables['address']['gender'] = Helper::getFieldValue(
+        $variables['address']['gender'] = MolloUtils::getFieldValue(
           $member,
           'gender',
           $gender_list
         );
 
-        $variables['address']['first_name'] = Helper::getFieldValue(
+        $variables['address']['first_name'] = MolloUtils::getFieldValue(
           $member,
           'first_name'
         );
-        $variables['address']['last_name'] = Helper::getFieldValue(
+        $variables['address']['last_name'] = MolloUtils::getFieldValue(
           $member,
           'last_name'
         );
-        $variables['address']['street_and_number'] = Helper::getFieldValue(
+        $variables['address']['street_and_number'] = MolloUtils::getFieldValue(
           $member,
           'street_and_number'
         );
-        $variables['address']['zip_code'] = Helper::getFieldValue(
+        $variables['address']['zip_code'] = MolloUtils::getFieldValue(
           $member,
           'zip_code'
         );
-        $variables['address']['city'] = Helper::getFieldValue($member, 'city');
+        $variables['address']['city'] = MolloUtils::getFieldValue($member, 'city');
 
-        $variables['address']['country'] = Helper::getFieldValue(
+        $variables['address']['country'] = MolloUtils::getFieldValue(
           $member,
           'country',
           $gender_list
         );
 
-        $variables['address']['email'] = Helper::getFieldValue(
+        $variables['address']['email'] = MolloUtils::getFieldValue(
           $member,
           'email'
         );
-        $variables['address']['phone'] = Helper::getFieldValue(
+        $variables['address']['phone'] = MolloUtils::getFieldValue(
           $member,
           'phone'
         );
 
         // Newsletter
-        $variables['newsletter'] = Helper::getFieldValue(
+        $variables['newsletter'] = MolloUtils::getFieldValue(
           $member,
           'smmg_accept_newsletter'
         );
@@ -650,7 +650,7 @@ class NewsletterController extends ControllerBase
   {
     $module = Newsletter::module;
     $template_names = self::getTemplateNames();
-    return Helper::getTemplates($module, $template_names);
+    return MolloUtils::getTemplates($module, $template_names);
   }
 
   public static function APINewsletter($id): JsonResponse

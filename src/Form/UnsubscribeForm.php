@@ -42,8 +42,7 @@ class UnsubscribeForm extends FormBase
 
 
         // Validate Nid Number:
-        $member_nid = trim($member_nid);
-        $member_nid = intval($member_nid);
+        $member_nid = (integer)$member_nid;
 
         // Add JS and CSS
         $form['#attached']['library'][] = 'smmg_newsletter/smmg_newsletter.main';

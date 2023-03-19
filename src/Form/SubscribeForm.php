@@ -7,7 +7,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\small_messages\Utility\Helper;
+use Drupal\mollo_utils\Utility\MolloUtils;
 use Drupal\smmg_newsletter\Controller\NewsletterController;
 
 /**
@@ -31,12 +31,12 @@ class SubscribeForm extends FormBase
     $gender_options[0] = t('Please Chose');
 
     $vid_gender = 'smmg_gender';
-    $this->options_gender = Helper::getTermsByID($vid_gender);
+    $this->options_gender = MolloUtils::getTermsByID($vid_gender);
     $this->options_gender[0] = t('Please Chose');
     $this->default_gender = 0;
 
     $vid_country = 'smmg_country';
-    $this->options_country = Helper::getTermsByID($vid_country);
+    $this->options_country = MolloUtils::getTermsByID($vid_country);
     $this->default_country = 0;
   }
 
@@ -197,7 +197,7 @@ class SubscribeForm extends FormBase
     // Submit
     // ===============================================
 
-    $token = Helper::generateToken();
+    $token = MolloUtils::generateToken();
 
     $form['token'] = [
       '#type' => 'hidden',
