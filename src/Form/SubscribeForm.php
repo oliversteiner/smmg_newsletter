@@ -275,7 +275,7 @@ class SubscribeForm extends FormBase
 
       if ($result && $result['status']) {
         $arg['nid'] = (int)$result['nid'];
-        $arg['token'] = $token;
+        $arg['token'] = urlencode($token);
 
         $form_state->setRedirect('smmg_newsletter.thank_you', $arg);
       } else {

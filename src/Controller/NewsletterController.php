@@ -334,7 +334,7 @@ class NewsletterController extends ControllerBase
           'field_city' => $city,
           'field_country' => $country,
           'field_email' => $email,
-          'field_smmg_token' => $token,
+          'field_mollo_token' => $token,
           'field_smmg_origin' => $origin_tid,
 
           // Newsletter
@@ -450,7 +450,7 @@ class NewsletterController extends ControllerBase
         '#type' => 'inline_template',
         '#template' => $template,
         '#attached' => ['library' => [Newsletter::module.'/smmg_newsletter.main']],
-        '#context' => self::newsletterVariables($nid, $token),
+        '#context' => self::newsletterVariables($nid, urldecode($token)),
       ],
     ];
     return $build;
@@ -494,7 +494,7 @@ class NewsletterController extends ControllerBase
 
       if ($member && $member->bundle() == 'smmg_member') {
         // Check Token
-        $node_token = MolloUtils::getFieldValue($member, 'smmg_token');
+        $node_token = MolloUtils::getFieldValue($member, 'mollo_token');
 
         if ($token != $node_token) {
           throw new AccessDeniedHttpException();
